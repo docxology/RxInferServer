@@ -25,6 +25,11 @@ The `docker-compose.yaml` currently has the following services:
 
 - RxInferServer: the server implementation running in the background on `localhost:8000` with hot-reloading enabled by default, use `LocalPreferences.toml` file to configure the server
 - Swagger UI: a web interface for visualizing and testing the OpenAPI specification, the UI is available at `http://localhost:8080` and allows to test the API endpoints, the endpoints can also be tested in VSCode by opening `spec.yaml` directly and clicking on the "Try it" button
+- OpenTelemetry Collector: a service that collects, processes, and exports telemetry data (metrics, traces, and logs) from the RxInferServer. It listens for OTLP data on ports 4317 (gRPC) and 4318 (HTTP), exposes a Prometheus metrics endpoint on port 8889, and provides its own internal metrics on port 8888. The configuration is stored in `telemetry/otel-collector.yaml`.
+- Prometheus: a monitoring and alerting tool that scrapes and stores metrics from the OpenTelemetry Collector. The Prometheus UI is available at `http://localhost:9090` and allows querying and visualizing collected metrics.
+- Loki: a log aggregation system designed to store and query logs from all your applications and infrastructure. Loki data can be accessed via Grafana.
+- Tempo: a high-volume, minimal-dependency distributed tracing backend. It can ingest, store, and query traces and is tightly integrated with Grafana.
+- Grafana: a multi-platform open source analytics and interactive visualization web application. It provides charts, graphs, and alerts when connected to supported data sources. Access it at `http://localhost:3000`.
 
 ### Editing the OpenAPI Specification
 
@@ -64,6 +69,68 @@ The API uses standard Bearer token authentication with the `Authorization` heade
    - By default, all endpoints except `/token` require authentication
 
 See [Configuration](configuration.md) for more details on setting up authentication for development and production.
+
+### OpenTelemetry Integration
+
+The development environment includes a complete observability stack:
+
+1. **OpenTelemetry Collector**: Collects telemetry data (metrics, traces, logs) from the RxInfer server
+2. **Prometheus**: Stores and queries metrics
+3. **Loki**: Stores and queries logs
+4. **Tempo**: Stores and queries distributed traces
+5. **Grafana**: Visualizes all telemetry data in a unified interface
+
+#### Available Endpoints
+
+- **OpenTelemetry Collector**:
+  - gRPC: `localhost:4317`
+  - HTTP: `localhost:4318`
+  - Prometheus Metrics (collector): `http://localhost:8888/metrics`
+  - Prometheus Exporter (application): `http://localhost:8889/metrics`
+
+- **Prometheus**: `http://localhost:9090`
+- **Loki**: `http://localhost:3100`
+- **Tempo**: `http://localhost:3200`
+- **Grafana**: `http://localhost:3000` (admin/admin)
+
+#### Viewing Telemetry Data
+
+For a unified view of all telemetry data, access Grafana at `http://localhost:3000`:
+- Default login is `admin/admin`
+- All data sources (Prometheus, Loki, Tempo) are pre-configured
+- Create dashboards to view metrics, logs, and traces in one place
+- Explore traces, logs, and metrics with correlation between them
+
+You can also access each component directly:
+- Prometheus UI at `http://localhost:9090` for metrics queries
+- Tempo UI at `http://localhost:3200` for trace viewing
+- Raw metrics at `http://localhost:8889/metrics`
+
+#### Configuration
+
+- **OpenTelemetry Collector**: `telemetry/otel-collector.yaml`
+- **Prometheus**: `prometheus.yml`
+- **Loki**: `loki-config.yaml`
+- **Tempo**: `tempo-config.yaml`
+- **Grafana Datasources**: `datasource.yml`
+
+After changing any configuration, restart the respective service:
+```bash
+# For OpenTelemetry Collector
+docker-compose restart otel-collector
+
+# For Prometheus
+docker-compose restart prometheus
+
+# For Loki
+docker-compose restart loki
+
+# For Tempo
+docker-compose restart tempo
+
+# For Grafana
+docker-compose restart grafana
+```
 
 ### Generating Server Code
 

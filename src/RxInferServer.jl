@@ -5,6 +5,13 @@ using RxInfer
 using HTTP, Sockets, JSON3, RxInferServerOpenAPI
 using Revise, Preferences, Dates
 
+using OpenTelemetry
+using Logging
+
+global_logger(OtelSimpleLogger(exporter=OtlpHttpLogsExporter()))
+global_tracer_provider(TracerProvider(; span_processor=BatchSpanProcessor(OtlpHttpTracesExporter())))
+global_meter_provider(MeterProvider())
+
 # API configuration
 const API_PATH_PREFIX = "/v1"
 const PORT = parse(Int, get(ENV, "RXINFER_SERVER_PORT", "8000"))
@@ -76,8 +83,11 @@ RxInferServer.serve()
 - [`RxInferServer.is_hot_reload_enabled`](@ref): Check if hot reloading is enabled
 """
 function serve()
+    _, otel_http_middleware = instrument!(HTTP)
+    metric_reader = PeriodicMetricReader(MetricReader(OtlpHttpMetricsExporter()))
+
     # Initialize HTTP router for handling API endpoints
-    router = HTTP.Router(cors404, cors405)
+    router = HTTP.Router(cors404, cors405, otel_http_middleware)
     server_running = Ref(true)
 
     # Create temp file to track server state and trigger file watchers
@@ -148,6 +158,8 @@ function serve()
             @info "[$(Dates.format(now(), "HH:MM:SS"))] Closing hot reload task..."
             wait(hot_reload)
         end
+
+        close(metric_reader)
     end
 
     # Start HTTP server on port `PORT`
