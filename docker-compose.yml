@@ -11,6 +11,8 @@ services:
     environment:
       - RXINFER_SERVER_PORT=8000
       - RXINFER_SERVER_DEV_TOKEN=dev-token
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=rxinfer-server
     depends_on:
       - otel-collector
 

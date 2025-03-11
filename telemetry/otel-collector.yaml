@@ -3,6 +3,10 @@ receivers:
     protocols:
       grpc:
       http:
+        endpoint: ":4318"
+        cors:
+            allowed_origins:
+              - "*"
 
 exporters:
   loki:

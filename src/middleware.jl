@@ -74,7 +74,7 @@ Returns true if the token is the development token. Returns false if the develop
 
 See also: [`is_dev_token_enabled`](@ref), [`is_dev_token_disabled`](@ref)
 """
-is_dev_token(token::String) = is_dev_token_enabled() && token == DEV_TOKEN
+is_dev_token(token) = is_dev_token_enabled() && token == DEV_TOKEN
 
 # List of URL paths that are exempt from authentication
 const AUTH_EXEMPT_PATHS = [
@@ -125,6 +125,10 @@ const UNAUTHORIZED_RESPONSE = middleware_post_invoke_cors(
 
 function middleware_check_token(handler::F) where {F}
     return function (req::HTTP.Request)
+
+        @info "Hello world!"
+        println("Hello world!")
+
         # First check if this request should bypass 
         # authentication entirely
         if should_bypass_auth(req)
@@ -134,6 +138,8 @@ function middleware_check_token(handler::F) where {F}
         if !middleware_check_token(req)
             return UNAUTHORIZED_RESPONSE
         end
+
+        @info "after check token"
 
         # Request is authenticated, proceed to the handler
         return handler(req)
