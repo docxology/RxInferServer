@@ -15,3 +15,7 @@
 /openapi/server/Manifest.toml
 
 /custom_models/
+
+/examples/Manifest.toml
+**/.ipynb_checkpoints
+**/.DS_Store

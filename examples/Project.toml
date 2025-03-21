@@ -1,0 +1,9 @@
+[deps]
+RxInferServer = "e92bdd6b-15d6-410c-ab97-e133e2594943"
+RxInferServerOpenAPI = "476dbcea-416d-4115-b70c-6e4041cc1de4"
+RxInferClientOpenAPI = "8b1d2e5c-3735-4918-bca0-1c0cc8ef920a"
+
+[sources]
+RxInferServer = { path = ".." }
+RxInferClientOpenAPI = { path = "../openapi/client" }
+RxInferServerOpenAPI = { path = "../openapi/server" }
