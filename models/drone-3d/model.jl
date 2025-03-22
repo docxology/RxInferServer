@@ -129,7 +129,7 @@ end
         s[i + 1] ~ MvNormal(μ = state_transition_3d(s[i], u[i], drone, dt), Σ = 1e-10 * I)
     end
 
-    s[end] ~ MvNormal(mean = goal, covariance = 1e-5 * diageye(12))
+    s[end] ~ MvNormal(mean = goal, covariance = 1e-3 * diageye(12))
 end
 
 @meta function drone_meta_3d()
@@ -143,9 +143,25 @@ function move_to_target_3d(drone, start, target, horizon, dt)
         data = (initial_state = start, goal = [target[1], target[2], target[3], 0, 0, 0, 0, 0, 0, 0, 0, 0]),
         meta = drone_meta_3d(),
         returnvars = (s = KeepLast(), u = KeepLast()),
-        options = (limit_stack_depth = 200,)
+        # options = (limit_stack_depth = 200,)
     )
-    return Dict("actions" => mean.(results.posteriors[:u]), "states" => mean.(results.posteriors[:s]))
+
+    states = mean.(results.posteriors[:s])
+    actions = mean.(results.posteriors[:u])
+
+    next_state = state_transition_3d(
+        start,
+        actions[1],
+        drone,
+        dt
+    )
+
+    return Dict(
+        "actions" => actions,
+        "states" => states,
+        "next_state" => next_state
+        # "next_state" => states[2]
+    )
 end
 
 function run_inference(state, data)
