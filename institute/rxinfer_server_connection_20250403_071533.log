@@ -1,0 +1,11 @@
+=== RXINFER SERVER CONNECTION LOG ===
+Timestamp: 2025-04-03T07:15:33.873
+Server URL: http://localhost:8000/v1
+Token: 99d55dd4-8e42-408f-a7b3-824a10f04088
+
+Failed to retrieve server details.
+
+=== CONNECTION ATTEMPTS ===
+- http://localhost:8000/v1: CONNECTED
+- https://api.rxinfer.ai/v1: FAILED
+- https://rxinfer.ai/api/v1: FAILED

@@ -1,0 +1,9 @@
+=== RXINFER MODEL MANAGEMENT LOG ===
+Timestamp: 2025-04-03T07:15:55.871
+Server: http://localhost:8000/v1
+Token: 99d55dd4-8e42-408f-a7b3-824a10f04088
+
+=== AVAILABLE MODELS ===
+
+=== ERROR ===
+Error during testing: OpenAPI.Clients.ApiException(0, "Failed to connect to localhost port 8000 after 0 ms: Couldn't connect to server", Downloads.Response(nothing, "http://localhost:8000/v1/models/available", 0, "", Pair{String, String}[]), Downloads.RequestError("http://localhost:8000/v1/models/available", 7, "Failed to connect to localhost port 8000 after 0 ms: Couldn't connect to server", Downloads.Response(nothing, "http://localhost:8000/v1/models/available", 0, "", Pair{String, String}[])))
